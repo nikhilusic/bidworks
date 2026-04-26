@@ -1,0 +1,136 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Project {
+  id        String     @id @default(uuid())
+  name      String
+  createdAt DateTime   @default(now()) @map("created_at")
+  updatedAt DateTime   @updatedAt @map("updated_at")
+  estimates Estimate[]
+
+  @@map("projects")
+}
+
+model Estimate {
+  id              String                  @id @default(uuid())
+  projectId       String                  @map("project_id")
+  name            String
+  revision        Int                     @default(1)
+  description     String                  @default("")
+  status          EstimateStatus          @default(Draft)
+  startPeriod     String?                 @map("start_period")
+  durationMonths  Int?                    @map("duration_months")
+  createdAt       DateTime                @default(now()) @map("created_at")
+  createdBy       String                  @map("created_by")
+  updatedAt       DateTime                @updatedAt @map("updated_at")
+  updatedBy       String                  @map("updated_by")
+  totalEffortHours Decimal               @default(0) @map("total_effort_hours") @db.Decimal(18, 4)
+  totalCostEur    Decimal                 @default(0) @map("total_cost_eur") @db.Decimal(18, 2)
+  project         Project                 @relation(fields: [projectId], references: [id])
+  roleSelections  EstimateRoleSelection[]
+  solutionPhases  SolutionPhase[]
+
+  @@unique([projectId, name])
+  @@map("estimates")
+}
+
+enum EstimateStatus {
+  Draft
+}
+
+model RoleType {
+  id             String                  @id @default(uuid())
+  name           String
+  seniority      String?
+  priceCardRates PriceCardRate[]
+  roleSelections EstimateRoleSelection[]
+  effortEntries  TaskEffortEntry[]
+
+  @@map("role_types")
+}
+
+model PriceCardRate {
+  id            String   @id @default(uuid())
+  roleTypeId    String   @map("role_type_id")
+  rateYear      Int      @map("rate_year")
+  hourlyRateEur Decimal  @map("hourly_rate_eur") @db.Decimal(18, 2)
+  roleType      RoleType @relation(fields: [roleTypeId], references: [id])
+
+  @@unique([roleTypeId, rateYear])
+  @@map("price_card_rates")
+}
+
+model EstimateRoleSelection {
+  id         String   @id @default(uuid())
+  estimateId String   @map("estimate_id")
+  roleTypeId String   @map("role_type_id")
+  estimate   Estimate @relation(fields: [estimateId], references: [id])
+  roleType   RoleType @relation(fields: [roleTypeId], references: [id])
+
+  @@unique([estimateId, roleTypeId])
+  @@map("estimate_role_selections")
+}
+
+model SolutionPhase {
+  id               String   @id @default(uuid())
+  estimateId       String   @map("estimate_id")
+  name             String
+  totalEffortHours Decimal  @default(0) @map("total_effort_hours") @db.Decimal(18, 4)
+  totalCostEur     Decimal  @default(0) @map("total_cost_eur") @db.Decimal(18, 2)
+  estimate         Estimate @relation(fields: [estimateId], references: [id])
+  modules          Module[]
+
+  @@unique([estimateId, name])
+  @@map("solution_phases")
+}
+
+model Module {
+  id               String        @id @default(uuid())
+  solutionPhaseId  String        @map("solution_phase_id")
+  name             String
+  totalEffortHours Decimal       @default(0) @map("total_effort_hours") @db.Decimal(18, 4)
+  totalCostEur     Decimal       @default(0) @map("total_cost_eur") @db.Decimal(18, 2)
+  solutionPhase    SolutionPhase @relation(fields: [solutionPhaseId], references: [id])
+  tasks            Task[]
+
+  @@unique([solutionPhaseId, name])
+  @@map("modules")
+}
+
+model Task {
+  id               String          @id @default(uuid())
+  moduleId         String          @map("module_id")
+  title            String
+  description      String          @default("")
+  repetitionCount  Int             @default(1) @map("repetition_count")
+  isEnabled        Boolean         @default(true) @map("is_enabled")
+  totalEffortHours Decimal         @default(0) @map("total_effort_hours") @db.Decimal(18, 4)
+  totalCostEur     Decimal         @default(0) @map("total_cost_eur") @db.Decimal(18, 2)
+  module           Module          @relation(fields: [moduleId], references: [id])
+  effortEntries    TaskEffortEntry[]
+
+  @@map("tasks")
+}
+
+model TaskEffortEntry {
+  id            String   @id @default(uuid())
+  taskId        String   @map("task_id")
+  roleTypeId    String   @map("role_type_id")
+  effortHours   Decimal  @map("effort_hours") @db.Decimal(18, 4)
+  hourlyRateEur Decimal  @map("hourly_rate_eur") @db.Decimal(18, 2)
+  costEur       Decimal  @map("cost_eur") @db.Decimal(18, 2)
+  task          Task     @relation(fields: [taskId], references: [id])
+  roleType      RoleType @relation(fields: [roleTypeId], references: [id])
+
+  @@unique([taskId, roleTypeId])
+  @@map("task_effort_entries")
+}
