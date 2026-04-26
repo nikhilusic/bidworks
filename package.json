@@ -13,12 +13,17 @@
   "dependencies": {
     "decimal.js": "^10.4.3",
     "fastify": "^4.28.1",
+    "fastify-plugin": "^5.1.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@prisma/client": "^5.22.0",
     "@types/node": "^22.15.3",
+    "@types/supertest": "^7.2.0",
     "eslint": "^8.57.0",
     "prettier": "^3.3.3",
+    "prisma": "^5.22.0",
+    "supertest": "^7.2.2",
     "typescript": "^5.6.3",
     "vitest": "^2.1.4"
   }

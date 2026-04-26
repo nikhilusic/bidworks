@@ -68,7 +68,7 @@ export class UpdateTask {
 
     const repetitionCount = command.repetitionCount ?? task.repetitionCount;
     const isEnabled = command.isEnabled ?? task.isEnabled;
-    const entriesToUse = resolvedEntries ?? task.effortEntries.map((e) => ({
+    const entriesToUse = resolvedEntries ?? (task.effortEntries as any[]).map((e: any) => ({
       roleTypeId: e.roleTypeId,
       effortHours: new Decimal(e.effortHours.toString()),
       hourlyRateEur: new Decimal(e.hourlyRateEur.toString()),

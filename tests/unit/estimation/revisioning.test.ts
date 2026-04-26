@@ -17,8 +17,8 @@ describe('Revision auto-increment', () => {
   });
 
   it('detects stale revision conflict', () => {
-    const currentRevision = 3;
-    const expectedRevision = 2; // stale
+    const currentRevision: number = 3;
+    const expectedRevision: number = 2; // stale
     expect(currentRevision !== expectedRevision).toBe(true);
   });
 

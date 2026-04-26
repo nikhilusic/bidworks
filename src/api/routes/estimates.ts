@@ -92,9 +92,9 @@ export const estimateRoutes: FastifyPluginAsync = async (fastify: FastifyInstanc
       });
 
       // Find the newly created task to return
-      const createdTask = updatedEstimate.solutionPhases
-        .flatMap((p) => p.modules.flatMap((m) => m.tasks.map((t) => ({ task: t, phase: p.name, module: m.name }))))
-        .find((t) => t.task.title === input.title);
+      const createdTask = (updatedEstimate.solutionPhases as any[])
+        .flatMap((p: any) => (p.modules as any[]).flatMap((m: any) => (m.tasks as any[]).map((t: any) => ({ task: t, phase: p.name, module: m.name }))))
+        .find((t: any) => t.task.title === input.title);
 
       if (!createdTask) {
         return reply.status(201).send({ id: 'unknown', title: input.title, isEnabled: true, repetitionCount: input.repetitionCount, totalEffortHours: 0, totalCostEur: 0 });

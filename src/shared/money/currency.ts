@@ -1,4 +1,11 @@
-import Decimal from 'decimal.js';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const Decimal = require('decimal.js');
 
-export const toDecimal = (value: number | string | Decimal): Decimal => new Decimal(value);
-export const round2 = (value: Decimal): Decimal => value.toDecimalPlaces(2, Decimal.ROUND_HALF_UP);
+export function toDecimal(value: number | string | object): object {
+  return new Decimal(value);
+}
+
+export function round2(value: object): object {
+  // Round to 2 decimal places (mode 4 = ROUND_HALF_UP)
+  return (value as any).toDecimalPlaces(2, 4);
+}
