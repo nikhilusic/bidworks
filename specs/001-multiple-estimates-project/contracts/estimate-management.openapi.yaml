@@ -11,6 +11,7 @@ paths:
   /projects/{projectId}/estimates:
     post:
       summary: Create estimate
+      description: Non-idempotent create operation. Server assigns revision/version and default Draft status.
       operationId: createEstimate
       parameters:
         - name: projectId
@@ -32,11 +33,24 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Estimate'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
         '409':
           description: Duplicate estimate name within project
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
   /projects/{projectId}/estimates/{estimateId}:
     patch:
       summary: Update estimate planning and metadata
+      description: Uses optimistic concurrency via required revision in request body. Not idempotent across differing payloads.
       operationId: updateEstimate
       parameters:
         - name: projectId
@@ -64,11 +78,26 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Estimate'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
         '409':
           description: Revision conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
   /projects/{projectId}/estimates/{estimateId}/roles:
     put:
       summary: Replace selected role types for estimate
+      description: Idempotent replacement for selected roles when the same payload and revision are supplied.
       operationId: setEstimateRoles
       parameters:
         - name: projectId
@@ -96,9 +125,26 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Estimate'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          description: Revision conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
   /projects/{projectId}/estimates/{estimateId}/tasks:
     post:
       summary: Create task with role effort entries
+      description: Non-idempotent create operation; role-effort entries must use role types selected for the estimate.
       operationId: createTask
       parameters:
         - name: projectId
@@ -126,9 +172,26 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Task'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          description: Revision conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
   /projects/{projectId}/estimates/{estimateId}/tasks/{taskId}:
     patch:
       summary: Update task details, effort, repetitions, or enabled state
+      description: Uses optimistic concurrency via required revision in request body.
       operationId: updateTask
       parameters:
         - name: projectId
@@ -162,9 +225,26 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Task'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          description: Revision conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
   /projects/{projectId}/estimates/{estimateId}/summary:
     get:
       summary: Get estimate summary
+      description: Read-only retrieval of estimate-level summary totals. Idempotent.
       operationId: getEstimateSummary
       parameters:
         - name: projectId
@@ -186,15 +266,52 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/EstimateSummary'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
 components:
+  responses:
+    BadRequest:
+      description: Invalid request syntax or malformed payload.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Unauthorized:
+      description: Authentication is required or invalid.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Forbidden:
+      description: Authenticated user is not allowed to access this resource.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    NotFound:
+      description: Resource does not exist in the requested scope.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    UnprocessableEntity:
+      description: Domain validation failed (for example role-selection, repetition, or planning constraints).
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
   schemas:
     CreateEstimateRequest:
       type: object
       required:
         - name
         - description
-        - startPeriod
-        - durationMonths
         - createdBy
       properties:
         name:
@@ -257,6 +374,7 @@ components:
         - solutionPhase
         - module
         - title
+        - description
         - repetitionCount
         - effortEntries
         - updatedBy
@@ -327,6 +445,10 @@ components:
         - status
         - startPeriod
         - durationMonths
+        - createdAt
+        - createdBy
+        - updatedAt
+        - updatedBy
         - totalEffortHours
         - totalCostEur
       properties:
@@ -349,6 +471,16 @@ components:
           type: string
         durationMonths:
           type: integer
+        createdAt:
+          type: string
+          format: date-time
+        createdBy:
+          type: string
+        updatedAt:
+          type: string
+          format: date-time
+        updatedBy:
+          type: string
         totalEffortHours:
           type: number
         totalCostEur:
@@ -420,3 +552,24 @@ components:
           type: number
         overallCostEur:
           type: number
+    ErrorResponse:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          description: Stable machine-readable error code.
+        message:
+          type: string
+        details:
+          type: array
+          items:
+            type: object
+            required: [field, issue]
+            properties:
+              field:
+                type: string
+              issue:
+                type: string
