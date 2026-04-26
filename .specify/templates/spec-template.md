@@ -65,6 +65,51 @@
 
 [Add more user stories as needed, each with an assigned priority]
 
+## Architecture & Design *(mandatory)*
+
+### System Design
+
+- **Architecture Style**: [e.g., layered, modular monolith, event-driven, microservices]
+- **System Context**: [external systems, users, and boundaries]
+- **Deployment Shape**: [runtime components and hosting assumptions]
+
+### Component Breakdown
+
+- **Component A**: [responsibility, owned data, dependencies]
+- **Component B**: [responsibility, owned data, dependencies]
+- **Component C**: [responsibility, owned data, dependencies]
+
+### Data Flow
+
+1. [Trigger] -> [Component] -> [Data transformation] -> [Store/Output]
+2. [Trigger] -> [Component] -> [Data transformation] -> [Store/Output]
+
+### API Contracts & Interaction Patterns
+
+- **Contract 1**: [endpoint/event, input schema, output schema, errors, versioning]
+- **Contract 2**: [endpoint/event, input schema, output schema, errors, versioning]
+- **Interaction Pattern**: [sync/async/evented/batch] with justification
+
+### Scalability & Extensibility Baseline
+
+- **Expected Initial Load**: [throughput/concurrency/data volume]
+- **Scaling Plan**: [vertical/horizontal approach and bottlenecks]
+- **Extensibility Points**: [modules/interfaces intended for future expansion]
+- **Redesign Trigger**: [explicit threshold that requires architecture revision]
+
+### Design Decisions & Rationale
+
+- **Decision 1**: [what was chosen and why]
+- **Alternative Rejected**: [what was not chosen and why]
+
+### Non-Functional Requirements (NFRs)
+
+- **NFR-001 Performance**: [measurable target]
+- **NFR-002 Reliability**: [measurable target]
+- **NFR-003 Security**: [control or measurable target]
+- **NFR-004 Operability**: [logging/monitoring/supportability target]
+- **NFR-005 Maintainability/Extensibility**: [modularity/changeability target]
+
 ### Edge Cases
 
 <!--

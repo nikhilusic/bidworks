@@ -26,12 +26,19 @@
 **Performance Goals**: [domain-specific, e.g., 1000 req/s, 10k lines/sec, 60 fps or NEEDS CLARIFICATION]  
 **Constraints**: [domain-specific, e.g., <200ms p95, <100MB memory, offline-capable or NEEDS CLARIFICATION]  
 **Scale/Scope**: [domain-specific, e.g., 10k users, 1M LOC, 50 screens or NEEDS CLARIFICATION]
+**Architecture Artifacts**: [required: system design, component breakdown, data flow, API contracts, interaction patterns]
+**NFR Coverage**: [required: performance, reliability, security, operability, maintainability, compliance/cost as applicable]
 
 ## Constitution Check
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-[Gates determined based on constitution file]
+- [ ] Architecture baseline exists and is approved before implementation work.
+- [ ] System design, component breakdown, and data flow are documented for core user journeys.
+- [ ] API contracts and interaction patterns are explicit, versioned where needed, and testable.
+- [ ] Minimum scalability/extensibility posture is defined with known limits and triggers.
+- [ ] Design decisions include rationale and rejected alternatives.
+- [ ] Applicable NFRs are documented with measurable acceptance checks.
 
 ## Project Structure
 
