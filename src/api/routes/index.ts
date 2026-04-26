@@ -1,2 +1,2 @@
-export * from './projects.js';
-export * from './estimates.js';
+export { projectRoutes } from './projects.js';
+export { estimateRoutes } from './estimates.js';

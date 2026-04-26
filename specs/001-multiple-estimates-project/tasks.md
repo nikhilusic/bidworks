@@ -25,12 +25,12 @@
 
 **Purpose**: Establish base project scaffolding, architecture artifacts, and test harness.
 
-- [ ] T001 Create backend folder structure markers in `src/api/routes/index.ts`, `src/modules/estimation/index.ts`, `src/shared/index.ts`, and `tests/README.md`
-- [ ] T002 Initialize project config in `package.json`, `tsconfig.json`, and `vitest.config.ts`
-- [ ] T003 [P] Configure Fastify bootstrap entry in `src/app.ts`
-- [ ] T004 [P] Configure lint/format tools in `.eslintrc.cjs` and `.prettierrc.json`
-- [ ] T005 Add environment and DB configuration scaffolding in `src/api/plugins/env.ts`, `src/api/plugins/db.ts`, and `.env.example`
-- [ ] T006 [P] Add shared money/time/error utilities in `src/shared/money/currency.ts`, `src/shared/time/clock.ts`, and `src/shared/errors/domain-error.ts`
+- [x] T001 Create backend folder structure markers in `src/api/routes/index.ts`, `src/modules/estimation/index.ts`, `src/shared/index.ts`, and `tests/README.md`
+- [x] T002 Initialize project config in `package.json`, `tsconfig.json`, and `vitest.config.ts`
+- [x] T003 [P] Configure Fastify bootstrap entry in `src/app.ts`
+- [x] T004 [P] Configure lint/format tools in `.eslintrc.cjs` and `.prettierrc.json`
+- [x] T005 Add environment and DB configuration scaffolding in `src/api/plugins/env.ts`, `src/api/plugins/db.ts`, and `.env.example`
+- [x] T006 [P] Add shared money/time/error utilities in `src/shared/money/currency.ts`, `src/shared/time/clock.ts`, and `src/shared/errors/domain-error.ts`
 - [ ] T007 Add architecture decision record references in `specs/001-multiple-estimates-project/research.md` and `specs/001-multiple-estimates-project/plan.md`
 
 ---
@@ -41,19 +41,19 @@
 
 **CRITICAL**: No user story tasks start before this phase is complete.
 
-- [ ] T008 Define Prisma schema entities from `data-model.md` in `prisma/schema.prisma`
-- [ ] T009 Create initial DB migration for estimation model in `prisma/migrations/001_estimation_init/migration.sql` (depends on T008)
-- [ ] T010 Implement repository interfaces in `src/modules/estimation/domain/services/EstimateRepository.ts` and `src/modules/estimation/domain/services/TaskRepository.ts`
-- [ ] T011 Implement persistence adapters in `src/modules/estimation/infrastructure/persistence/PrismaEstimateRepository.ts` and `src/modules/estimation/infrastructure/persistence/PrismaTaskRepository.ts`
-- [ ] T012 Implement price-card provider and annual increment logic in `src/modules/estimation/infrastructure/pricing/PriceCardProvider.ts`
-- [ ] T013 Implement deterministic roll-up domain service in `src/modules/estimation/domain/services/RollupCalculator.ts`
-- [ ] T014 Implement optimistic revision/concurrency guard in `src/modules/estimation/application/commands/RevisionGuard.ts`
-- [ ] T015 Implement shared Zod validation schemas from OpenAPI contracts in `src/api/schemas/estimates.ts`
-- [ ] T016 Add base route registration and error mapping in `src/api/routes/projects.ts` and `src/api/routes/estimates.ts`
-- [ ] T017 [P] Add contract test harness bootstrap in `tests/contract/setup.ts`
-- [ ] T018 [P] Add integration test harness bootstrap in `tests/integration/setup.ts`
-- [ ] T019 [P] Add unit test helper utilities for decimal assertions in `tests/unit/helpers/decimal-assertions.ts`
-- [ ] T061 [P] Add shared API error-schema contract assertions in `tests/contract/errors/error-schema.contract.test.ts`
+- [x] T008 Define Prisma schema entities from `data-model.md` in `prisma/schema.prisma`
+- [x] T009 Create initial DB migration for estimation model in `prisma/migrations/001_estimation_init/migration.sql` (depends on T008)
+- [x] T010 Implement repository interfaces in `src/modules/estimation/domain/services/EstimateRepository.ts` and `src/modules/estimation/domain/services/TaskRepository.ts`
+- [x] T011 Implement persistence adapters in `src/modules/estimation/infrastructure/persistence/PrismaEstimateRepository.ts` and `src/modules/estimation/infrastructure/persistence/PrismaTaskRepository.ts`
+- [x] T012 Implement price-card provider and annual increment logic in `src/modules/estimation/infrastructure/pricing/PriceCardProvider.ts`
+- [x] T013 Implement deterministic roll-up domain service in `src/modules/estimation/domain/services/RollupCalculator.ts`
+- [x] T014 Implement optimistic revision/concurrency guard in `src/modules/estimation/application/commands/RevisionGuard.ts`
+- [x] T015 Implement shared Zod validation schemas from OpenAPI contracts in `src/api/schemas/estimates.ts`
+- [x] T016 Add base route registration and error mapping in `src/api/routes/projects.ts` and `src/api/routes/estimates.ts`
+- [x] T017 [P] Add contract test harness bootstrap in `tests/contract/setup.ts`
+- [x] T018 [P] Add integration test harness bootstrap in `tests/integration/setup.ts`
+- [x] T019 [P] Add unit test helper utilities for decimal assertions in `tests/unit/helpers/decimal-assertions.ts`
+- [x] T061 [P] Add shared API error-schema contract assertions in `tests/contract/errors/error-schema.contract.test.ts`
 - [ ] T020 Constitution gate check: verify architecture/contracts/NFR traceability in `specs/001-multiple-estimates-project/plan.md`
 
 **Checkpoint**: Foundation complete; user stories can proceed.
@@ -68,20 +68,20 @@
 
 ### Tests for User Story 1
 
-- [ ] T021 [P] [US1] Contract test for `POST /projects/{projectId}/estimates` in `tests/contract/estimates/create-estimate.contract.test.ts`
-- [ ] T022 [P] [US1] Contract test for duplicate-name conflict (`409`) in `tests/contract/estimates/create-estimate-duplicate.contract.test.ts`
-- [ ] T066 [P] [US1] Contract test for stale-revision conflict (`409`) in `tests/contract/estimates/stale-revision-conflict.contract.test.ts`
-- [ ] T023 [P] [US1] Integration test for estimate isolation in `tests/integration/estimates/estimate-isolation.test.ts`
-- [ ] T024 [P] [US1] Unit test for revision auto-increment behavior in `tests/unit/estimation/revisioning.test.ts`
+- [x] T021 [P] [US1] Contract test for `POST /projects/{projectId}/estimates` in `tests/contract/estimates/create-estimate.contract.test.ts`
+- [x] T022 [P] [US1] Contract test for duplicate-name conflict (`409`) in `tests/contract/estimates/create-estimate-duplicate.contract.test.ts`
+- [x] T066 [P] [US1] Contract test for stale-revision conflict (`409`) in `tests/contract/estimates/stale-revision-conflict.contract.test.ts`
+- [x] T023 [P] [US1] Integration test for estimate isolation in `tests/integration/estimates/estimate-isolation.test.ts`
+- [x] T024 [P] [US1] Unit test for revision auto-increment behavior in `tests/unit/estimation/revisioning.test.ts`
 
 ### Implementation for User Story 1
 
-- [ ] T025 [US1] Implement `CreateEstimate` command handler in `src/modules/estimation/application/commands/CreateEstimate.ts`
-- [ ] T026 [US1] Implement unique-name-per-project domain rule in `src/modules/estimation/domain/services/EstimateNamingPolicy.ts`
-- [ ] T027 [US1] Implement estimate entity/value object mapping in `src/modules/estimation/domain/entities/Estimate.ts`
-- [ ] T028 [US1] Implement API handler for create estimate in `src/api/routes/estimates.ts`
-- [ ] T029 [US1] Persist audit fields and default `Draft` status in `src/modules/estimation/infrastructure/persistence/PrismaEstimateRepository.ts`
-- [ ] T030 [US1] Implement estimate retrieval query scoped by estimate id in `src/modules/estimation/application/queries/GetEstimateById.ts`
+- [x] T025 [US1] Implement `CreateEstimate` command handler in `src/modules/estimation/application/commands/CreateEstimate.ts`
+- [x] T026 [US1] Implement unique-name-per-project domain rule in `src/modules/estimation/domain/services/EstimateNamingPolicy.ts`
+- [x] T027 [US1] Implement estimate entity/value object mapping in `src/modules/estimation/domain/entities/Estimate.ts`
+- [x] T028 [US1] Implement API handler for create estimate in `src/api/routes/estimates.ts`
+- [x] T029 [US1] Persist audit fields and default `Draft` status in `src/modules/estimation/infrastructure/persistence/PrismaEstimateRepository.ts`
+- [x] T030 [US1] Implement estimate retrieval query scoped by estimate id in `src/modules/estimation/application/queries/GetEstimateById.ts`
 
 **Checkpoint**: US1 is deployable and independently testable.
 
@@ -95,21 +95,21 @@
 
 ### Tests for User Story 2
 
-- [ ] T031 [P] [US2] Contract test for `PATCH /projects/{projectId}/estimates/{estimateId}` in `tests/contract/estimates/update-estimate.contract.test.ts`
-- [ ] T032 [P] [US2] Contract test for `PUT /projects/{projectId}/estimates/{estimateId}/roles` in `tests/contract/estimates/set-roles.contract.test.ts`
-- [ ] T033 [P] [US2] Contract test for `POST /projects/{projectId}/estimates/{estimateId}/tasks` in `tests/contract/estimates/create-task.contract.test.ts`
-- [ ] T034 [P] [US2] Integration test for role-selection enforcement in `tests/integration/estimates/role-selection-enforcement.test.ts`
-- [ ] T035 [P] [US2] Unit test for repetition multiplier in `tests/unit/estimation/repetition-multiplier.test.ts`
+- [x] T031 [P] [US2] Contract test for `PATCH /projects/{projectId}/estimates/{estimateId}` in `tests/contract/estimates/update-estimate.contract.test.ts`
+- [x] T032 [P] [US2] Contract test for `PUT /projects/{projectId}/estimates/{estimateId}/roles` in `tests/contract/estimates/set-roles.contract.test.ts`
+- [x] T033 [P] [US2] Contract test for `POST /projects/{projectId}/estimates/{estimateId}/tasks` in `tests/contract/estimates/create-task.contract.test.ts`
+- [x] T034 [P] [US2] Integration test for role-selection enforcement in `tests/integration/estimates/role-selection-enforcement.test.ts`
+- [x] T035 [P] [US2] Unit test for repetition multiplier in `tests/unit/estimation/repetition-multiplier.test.ts`
 
 ### Implementation for User Story 2
 
-- [ ] T036 [US2] Implement update estimate planning command in `src/modules/estimation/application/commands/UpdateEstimate.ts`
-- [ ] T037 [US2] Implement set roles command in `src/modules/estimation/application/commands/SetEstimateRoles.ts`
-- [ ] T038 [US2] Implement create task command with phase/module creation logic in `src/modules/estimation/application/commands/CreateTask.ts`
-- [ ] T039 [US2] Implement task entity and effort entry entities in `src/modules/estimation/domain/entities/Task.ts` and `src/modules/estimation/domain/entities/TaskEffortEntry.ts`
-- [ ] T040 [US2] Implement role membership guard for task effort entries in `src/modules/estimation/domain/services/RoleSelectionGuard.ts`
-- [ ] T041 [US2] Implement month-year start period and duration validation in `src/api/schemas/estimates.ts`
-- [ ] T042 [US2] Wire update/roles/task endpoints in `src/api/routes/estimates.ts`
+- [x] T036 [US2] Implement update estimate planning command in `src/modules/estimation/application/commands/UpdateEstimate.ts`
+- [x] T037 [US2] Implement set roles command in `src/modules/estimation/application/commands/SetEstimateRoles.ts`
+- [x] T038 [US2] Implement create task command with phase/module creation logic in `src/modules/estimation/application/commands/CreateTask.ts`
+- [x] T039 [US2] Implement task entity and effort entry entities in `src/modules/estimation/domain/entities/Task.ts` and `src/modules/estimation/domain/entities/TaskEffortEntry.ts`
+- [x] T040 [US2] Implement role membership guard for task effort entries in `src/modules/estimation/domain/services/RoleSelectionGuard.ts`
+- [x] T041 [US2] Implement month-year start period and duration validation in `src/api/schemas/estimates.ts`
+- [x] T042 [US2] Wire update/roles/task endpoints in `src/api/routes/estimates.ts`
 
 **Checkpoint**: US1 + US2 work independently with validated planning/role/task data.
 
@@ -123,12 +123,12 @@
 
 ### Tests for User Story 3
 
-- [ ] T043 [P] [US3] Contract test for `PATCH /projects/{projectId}/estimates/{estimateId}/tasks/{taskId}` in `tests/contract/estimates/update-task.contract.test.ts`
-- [ ] T044 [P] [US3] Contract test for `GET /projects/{projectId}/estimates/{estimateId}/summary` in `tests/contract/estimates/get-summary.contract.test.ts`
-- [ ] T045 [P] [US3] Integration test for task disable exclusion from roll-ups in `tests/integration/estimates/task-disable-rollup.test.ts`
-- [ ] T046 [P] [US3] Integration test for start-year change recalculation in `tests/integration/estimates/start-year-recalculation.test.ts`
-- [ ] T047 [P] [US3] Unit test for hierarchy roll-up order in `tests/unit/estimation/rollup-hierarchy.test.ts`
-- [ ] T048 [P] [US3] Unit test for EUR precision/determinism in `tests/unit/estimation/currency-precision.test.ts`
+- [x] T043 [P] [US3] Contract test for `PATCH /projects/{projectId}/estimates/{estimateId}/tasks/{taskId}` in `tests/contract/estimates/update-task.contract.test.ts`
+- [x] T044 [P] [US3] Contract test for `GET /projects/{projectId}/estimates/{estimateId}/summary` in `tests/contract/estimates/get-summary.contract.test.ts`
+- [x] T045 [P] [US3] Integration test for task disable exclusion from roll-ups in `tests/integration/estimates/task-disable-rollup.test.ts`
+- [x] T046 [P] [US3] Integration test for start-year change recalculation in `tests/integration/estimates/start-year-recalculation.test.ts`
+- [x] T047 [P] [US3] Unit test for hierarchy roll-up order in `tests/unit/estimation/rollup-hierarchy.test.ts`
+- [x] T048 [P] [US3] Unit test for EUR precision/determinism in `tests/unit/estimation/currency-precision.test.ts`
 - [ ] T064 [P] [US3] Integration test matrix for multi-role and multi-module roll-ups in `tests/integration/estimates/rollup-matrix.test.ts`
 - [ ] T065 [P] [US3] Unit test for zero-hour effort entry behavior in `tests/unit/estimation/zero-hour-effort.test.ts`
 

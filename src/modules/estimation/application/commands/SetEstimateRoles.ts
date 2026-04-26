@@ -4,7 +4,7 @@ import { RevisionGuard } from './RevisionGuard.js';
 
 export interface SetEstimateRolesCommand {
   estimateId: string;
-  roleTypeIds: string[];
+  selectedRoleTypeIds: string[];
   revision: number;
   updatedBy: string;
 }
@@ -23,7 +23,7 @@ export class SetEstimateRoles {
 
     this.revisionGuard.check(existing.revision, command.revision);
 
-    await this.estimateRepo.setRoles(command.estimateId, command.roleTypeIds);
+    await this.estimateRepo.setRoles(command.estimateId, command.selectedRoleTypeIds);
 
     return this.estimateRepo.update(command.estimateId, {
       updatedBy: command.updatedBy,
