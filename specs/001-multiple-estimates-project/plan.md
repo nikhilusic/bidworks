@@ -32,6 +32,9 @@ Deliver an estimate-management capability that supports multiple independent est
 - [x] Design decisions include rationale and rejected alternatives.
 - [x] Applicable NFRs are documented with measurable acceptance checks.
 
+Evidence:
+- Contract error semantics, optimistic revision expectations, and idempotency notes are defined in `contracts/estimate-management.openapi.yaml`.
+
 ## Project Structure
 
 ### Documentation (this feature)
@@ -80,6 +83,10 @@ tests/
 ├── contract/
 ├── integration/
 └── unit/
+
+prisma/
+├── schema.prisma
+└── migrations/
 ```
 
 **Structure Decision**: Single backend service was selected because the feature scope is domain-heavy (estimation logic, pricing, roll-up consistency) with no mandatory independent frontend deliverable in this iteration.
@@ -88,40 +95,40 @@ tests/
 
 ### System Context
 
-- Actors: estimator, reviewer.
-- Upstream dependency: authenticated user context for audit fields.
-- Domain boundaries: project-level container, estimate-level isolation, estimate-only roll-up boundaries.
+- The system MUST support the estimator and reviewer actors.
+- The system MUST consume authenticated user context for audit fields.
+- Domain boundaries MUST enforce project-level container semantics, estimate-level isolation, and estimate-only roll-up boundaries.
 
 ### Component Breakdown
 
-- Project Estimate Registry: enforces unique estimate naming within a project.
-- Estimate Workspace: manages estimate identity, metadata, lifecycle (`Draft`), and planning fields.
-- Task & Effort Ledger: records phase/module/task hierarchy, selected roles, effort hours, counts, and enabled state.
-- Pricing & Rollup Engine: applies annual rates, year increments, repetition multipliers, and hierarchy roll-ups.
-- Summary Query Service: serves aggregate metrics for review and approval.
+- Project Estimate Registry MUST enforce unique estimate naming within a project.
+- Estimate Workspace MUST manage estimate identity, metadata, lifecycle (`Draft`), and planning fields.
+- Task & Effort Ledger MUST record phase/module/task hierarchy, selected roles, effort hours, counts, and enabled state.
+- Pricing & Rollup Engine MUST apply annual rates, year increments, repetition multipliers, and hierarchy roll-ups.
+- Summary Query Service MUST serve aggregate metrics for review and approval.
 
 ### Data Flow (Core Journey)
 
 1. Client writes estimate/task changes.
-2. API validates payload and concurrency token.
-3. Application layer updates estimate-scoped state.
-4. Pricing & Rollup engine recomputes deterministic totals.
-5. Updated totals are persisted in EUR.
-6. Response returns recalculated totals and summary snapshot.
+2. API MUST validate payload and concurrency token.
+3. Application layer MUST update estimate-scoped state.
+4. Pricing and roll-up engine MUST recompute deterministic totals.
+5. Updated totals MUST be persisted in EUR.
+6. Response MUST return recalculated totals and summary snapshot.
 
 ## Interaction Pattern Decisions
 
-- Write interactions are synchronous request/response to satisfy immediate recalculation requirement.
-- Read interactions expose summary and breakdown views for estimate-level review.
-- Concurrency uses optimistic version checks to avoid silent overwrite of parallel edits.
+- Write interactions MUST be synchronous request/response to satisfy immediate recalculation requirement.
+- Read interactions MUST expose summary and breakdown views for estimate-level review.
+- Concurrency MUST use optimistic revision checks to avoid silent overwrite of parallel edits.
 
 ## NFR Implementation Strategy
 
-- Performance: estimate-scoped recomputation and indexed lookups per estimate.
-- Reliability: decimal math and deterministic ordering in roll-up calculations.
-- Security: immutable audit fields at create/update boundaries with actor traceability.
-- Operability: explicit breakdown metrics at task/module/phase/estimate levels for diagnostics.
-- Extensibility: rate-provider abstraction to support future regional pricing or alternate cards.
+- Performance: the implementation MUST use estimate-scoped recomputation and indexed lookups per estimate.
+- Reliability: the implementation MUST use decimal math and deterministic ordering in roll-up calculations.
+- Security: the implementation MUST enforce immutable audit fields at create/update boundaries with actor traceability.
+- Operability: the implementation MUST expose explicit breakdown metrics at task/module/phase/estimate levels for diagnostics.
+- Extensibility: the implementation MUST use a rate-provider abstraction to support future regional pricing or alternate cards.
 
 ## Complexity Tracking
 

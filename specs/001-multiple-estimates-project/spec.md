@@ -59,41 +59,41 @@ As an estimator or reviewer, I can see automatic effort/cost rollups, summary me
 
 ### System Design
 
-- **Architecture Style**: Estimate-centric domain workflow with project-level option management.
-- **System Context**: Estimators and reviewers manage multiple estimate options per project; pricing inputs come from an annual role price card.
-- **Deployment Shape**: Central estimation capability serving project workspaces with isolated estimate contexts.
+- **Architecture Style**: The system MUST implement an estimate-centric domain workflow with project-level option management.
+- **System Context**: The system MUST support estimator/reviewer interactions per project while applying pricing inputs from an annual role price card.
+- **Deployment Shape**: The system MUST run as a central estimation capability with isolated estimate contexts.
 
 ### Component Breakdown
 
-- **Project Estimate Registry**: Maintains project-to-estimate relationships and enforces unique estimate names per project.
-- **Estimate Workspace**: Stores estimate identity, metadata, planning fields, and status lifecycle.
-- **Task & Effort Ledger**: Captures phase/module/task structure, selected role types, effort hours, repetitions, and enabled/disabled state.
-- **Pricing & Rollup Engine**: Applies role rates, annual increments, effort multipliers, and hierarchy roll-up rules to calculate totals.
-- **Estimate Summary View**: Presents count metrics and effort/cost totals for review and approval.
+- **Project Estimate Registry**: MUST maintain project-to-estimate relationships and enforce unique estimate names per project.
+- **Estimate Workspace**: MUST store estimate identity, metadata, planning fields, and status lifecycle.
+- **Task & Effort Ledger**: MUST capture phase/module/task structure, selected role types, effort hours, repetitions, and enabled/disabled state.
+- **Pricing & Rollup Engine**: MUST apply role rates, annual increments, effort multipliers, and hierarchy roll-up rules to calculate totals.
+- **Estimate Summary View**: MUST present count metrics and effort/cost totals for review and approval.
 
 ### Data Flow
 
-1. Estimator creates or updates an estimate -> Estimate Workspace validates identity and metadata -> Estimate is stored independently within project context.
-2. Estimator edits tasks/roles/effort -> Task & Effort Ledger records changes -> Pricing & Rollup Engine recalculates totals -> Summary View refreshes values.
+1. When an estimator creates or updates an estimate, the system MUST validate identity and metadata and MUST store the estimate independently within project context.
+2. When an estimator edits tasks/roles/effort, the system MUST record changes and MUST recalculate totals before returning updated summary values.
 
 ### API Contracts & Interaction Patterns
 
-- **Contract: Create Estimate**: Accepts project reference, estimate name, version, description, and creator metadata; returns a new estimate with default status `Draft`.
+- **Contract: Create Estimate**: Accepts project reference, estimate name, description, creator metadata, and optional planning fields; returns a new estimate with default status `Draft` and system-managed revision.
 - **Contract: Update Estimate Planning and Tasks**: Accepts planning fields, selected role types, and task-level inputs (phase, module, task details, role effort, repetition, enabled flag); returns updated estimate details and recalculated totals.
 - **Contract: Retrieve Estimate Summary**: Returns summary counts and roll-up effort/cost metrics for one estimate only.
 - **Interaction Pattern**: Synchronous update-and-recalculate behavior for estimator edits; each write operation returns recalculated totals for immediate feedback.
 - **Clarified Contract Rules**:
-	- Version identifiers are system-managed and auto-increment per estimate revision.
+	- Revision identifiers are system-managed and auto-increment per estimate revision.
 	- Estimate status lifecycle for this feature is `Draft` only.
 	- Expected start period format is month-year; duration format is whole months.
 	- When start-period year changes, all existing task costs are recalculated using rates for the new year.
 
 ### Scalability & Extensibility Baseline
 
-- **Expected Initial Load**: Support at least 500 active projects, up to 20 estimates per project, and up to 2,000 tasks per estimate.
-- **Scaling Plan**: Keep calculations scoped to estimate boundaries to avoid project-level aggregation overhead and reduce recalculation blast radius.
-- **Extensibility Points**: Role catalog expansion, additional effort types, regional display currency preferences, and alternate summary groupings.
-- **Redesign Trigger**: Re-architecture is required when 95th percentile recalculation exceeds agreed response target under normal operating load.
+- **Expected Initial Load**: The system MUST support at least 500 active projects, up to 20 estimates per project, and up to 2,000 tasks per estimate.
+- **Scaling Plan**: The implementation MUST keep calculations scoped to estimate boundaries to avoid project-level aggregation overhead and reduce recalculation blast radius.
+- **Extensibility Points**: The design MUST support role catalog expansion, additional effort types, regional display currency preferences, and alternate summary groupings.
+- **Redesign Trigger**: Re-architecture MUST be initiated when 95th percentile recalculation exceeds the agreed response target under normal operating load.
 
 ### Design Decisions & Rationale
 
@@ -107,7 +107,7 @@ As an estimator or reviewer, I can see automatic effort/cost rollups, summary me
 - **NFR-001 Performance**: Recalculation after edits must complete within 2 seconds for at least 95% of estimate updates under expected load.
 - **NFR-002 Reliability**: Calculation consistency must be deterministic; identical inputs must always produce identical totals.
 - **NFR-003 Security**: Created/updated user and timestamp fields must be auditable for all estimate changes.
-- **NFR-004 Operability**: Summary and roll-up values must be observable at task/module/phase/estimate levels for troubleshooting.
+- **NFR-004 Operability**: Every recalculation operation MUST emit structured logs including estimateId, revision, changedEntity, rollupLevel, elapsedMs, and resultStatus.
 - **NFR-005 Maintainability/Extensibility**: New role types and annual rate updates must be introducible without redefining existing estimate history.
 
 ### Edge Cases
@@ -115,7 +115,7 @@ As an estimator or reviewer, I can see automatic effort/cost rollups, summary me
 - What happens when an estimate has zero tasks but must still be saved and reviewed?
 - How does the system handle duplicate estimate names within the same project but allow the same name across different projects?
 - What happens when a task has effort hours for a role that is not selected for that estimate?
-- How does the system handle negative effort hours, zero-hour entries, or invalid repetition counts?
+- How does the system handle negative effort hours or invalid repetition counts?
 - What happens to totals when all tasks are disabled?
 - How does the system determine applicable billing year when expected start period is changed after tasks are entered?
 - What happens when an estimate revision is created while another revision is saved concurrently?
@@ -127,7 +127,7 @@ As an estimator or reviewer, I can see automatic effort/cost rollups, summary me
 - **FR-001**: The system MUST allow users to create multiple estimates under a single project.
 - **FR-002**: The system MUST maintain each estimate independently and MUST NOT combine effort or cost across estimates.
 - **FR-003**: The system MUST require each estimate name to be unique within a project.
-- **FR-004**: The system MUST capture estimate identity attributes: name, version identifier, and description.
+- **FR-004**: The system MUST capture estimate identity attributes: name, revision identifier, and description.
 - **FR-005**: The system MUST capture and maintain audit fields: Created Date, Created By, Updated Date, and Updated By.
 - **FR-006**: The system MUST assign `Draft` as the default status at estimate creation.
 - **FR-007**: The system MUST capture estimate planning information with expected project start period in month-year format and estimated project duration in whole months.
@@ -141,17 +141,18 @@ As an estimator or reviewer, I can see automatic effort/cost rollups, summary me
 - **FR-015**: The system MUST automatically calculate aggregated effort and cost across module, solution phase, and estimate levels.
 - **FR-016**: Cost calculations MUST use effort hours multiplied by applicable billing rates.
 - **FR-017**: The system MUST support task enable/disable behavior where disabled tasks remain visible but are excluded from all roll-up totals.
-- **FR-018**: The system MUST provide an estimate summary view containing: total solution components, total modules, total tasks, total effort by effort type, overall estimated effort, and overall estimated cost.
+- **FR-018**: The system MUST provide an estimate summary view containing: total solution components, total modules, total tasks, total effort by role type, overall estimated effort, and overall estimated cost.
 - **FR-019**: The system MUST reflect edits to tasks and effort values immediately in all relevant totals.
 - **FR-020**: The system MUST provide a static annual EUR price card for the current year using the defined role/rate set.
 - **FR-021**: For each subsequent year, the system MUST apply a EUR +2.0 increase per role rate.
 - **FR-022**: The system MUST execute cost roll-up hierarchy in this order: role type -> task -> module -> solution phase -> estimate.
 - **FR-023**: The system MUST NOT roll up estimate totals to project totals.
 - **FR-024**: The system MUST store calculated roll-up amounts in EUR in backend records.
-- **FR-025**: The system MUST auto-generate and auto-increment the estimate version identifier for each revision within a project.
+- **FR-025**: The system MUST auto-generate and auto-increment the estimate revision identifier for each revision within a project.
 - **FR-026**: The system MUST support `Draft` as the only estimate status in this feature scope.
 - **FR-027**: The summary metric for total solution components MUST equal the count of distinct solution phases in the estimate.
 - **FR-028**: If expected start period year is changed, the system MUST recalculate all existing task costs using the updated year's role rates.
+- **FR-029**: The system MUST allow zero-hour effort entries and MUST treat them as valid entries that contribute zero effort and zero cost in roll-up totals.
 
 ### Key Entities *(include if feature involves data)*
 
@@ -173,7 +174,7 @@ As an estimator or reviewer, I can see automatic effort/cost rollups, summary me
 - **SC-002**: 100% of new estimates start with status `Draft` and complete identity/audit metadata.
 - **SC-003**: For 95% of estimate edits, recalculated effort and cost totals are visible to users within 2 seconds.
 - **SC-004**: 100% of disabled tasks are excluded from effort/cost totals while remaining visible in estimate views.
-- **SC-005**: 100% of sampled roll-ups follow the required hierarchy and match expected calculation outcomes.
+- **SC-005**: 100% of roll-up test cases in the required matrix (enabled/disabled tasks, repetition counts, multi-role entries, multi-module, and year-change recalculation) follow the required hierarchy and match expected calculation outcomes.
 - **SC-006**: 100% of stored roll-up totals are persisted in EUR and are consistent with the applicable annual price card rules.
 
 ## Assumptions

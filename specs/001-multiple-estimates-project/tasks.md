@@ -25,12 +25,12 @@
 
 **Purpose**: Establish base project scaffolding, architecture artifacts, and test harness.
 
-- [ ] T001 Create backend folder structure from plan in `src/api/`, `src/modules/estimation/`, `src/shared/`, and `tests/`
+- [ ] T001 Create backend folder structure markers in `src/api/routes/index.ts`, `src/modules/estimation/index.ts`, `src/shared/index.ts`, and `tests/README.md`
 - [ ] T002 Initialize project config in `package.json`, `tsconfig.json`, and `vitest.config.ts`
 - [ ] T003 [P] Configure Fastify bootstrap entry in `src/app.ts`
-- [ ] T004 [P] Configure lint/format tools in `.eslintrc.*` and `.prettierrc*`
-- [ ] T005 Add environment and DB configuration scaffolding in `src/api/plugins/` and `.env.example`
-- [ ] T006 [P] Add shared money/time/error utilities in `src/shared/money/`, `src/shared/time/`, `src/shared/errors/`
+- [ ] T004 [P] Configure lint/format tools in `.eslintrc.cjs` and `.prettierrc.json`
+- [ ] T005 Add environment and DB configuration scaffolding in `src/api/plugins/env.ts`, `src/api/plugins/db.ts`, and `.env.example`
+- [ ] T006 [P] Add shared money/time/error utilities in `src/shared/money/currency.ts`, `src/shared/time/clock.ts`, and `src/shared/errors/domain-error.ts`
 - [ ] T007 Add architecture decision record references in `specs/001-multiple-estimates-project/research.md` and `specs/001-multiple-estimates-project/plan.md`
 
 ---
@@ -42,17 +42,18 @@
 **CRITICAL**: No user story tasks start before this phase is complete.
 
 - [ ] T008 Define Prisma schema entities from `data-model.md` in `prisma/schema.prisma`
-- [ ] T009 [P] Create initial DB migration for estimation model in `prisma/migrations/*`
-- [ ] T010 Implement repository interfaces in `src/modules/estimation/domain/services/`
-- [ ] T011 Implement persistence adapters in `src/modules/estimation/infrastructure/persistence/`
+- [ ] T009 Create initial DB migration for estimation model in `prisma/migrations/001_estimation_init/migration.sql` (depends on T008)
+- [ ] T010 Implement repository interfaces in `src/modules/estimation/domain/services/EstimateRepository.ts` and `src/modules/estimation/domain/services/TaskRepository.ts`
+- [ ] T011 Implement persistence adapters in `src/modules/estimation/infrastructure/persistence/PrismaEstimateRepository.ts` and `src/modules/estimation/infrastructure/persistence/PrismaTaskRepository.ts`
 - [ ] T012 Implement price-card provider and annual increment logic in `src/modules/estimation/infrastructure/pricing/PriceCardProvider.ts`
 - [ ] T013 Implement deterministic roll-up domain service in `src/modules/estimation/domain/services/RollupCalculator.ts`
-- [ ] T014 Implement optimistic revision/concurrency guard in `src/modules/estimation/application/commands/`
+- [ ] T014 Implement optimistic revision/concurrency guard in `src/modules/estimation/application/commands/RevisionGuard.ts`
 - [ ] T015 Implement shared Zod validation schemas from OpenAPI contracts in `src/api/schemas/estimates.ts`
 - [ ] T016 Add base route registration and error mapping in `src/api/routes/projects.ts` and `src/api/routes/estimates.ts`
 - [ ] T017 [P] Add contract test harness bootstrap in `tests/contract/setup.ts`
 - [ ] T018 [P] Add integration test harness bootstrap in `tests/integration/setup.ts`
-- [ ] T019 [P] Add unit test helper utilities for decimal assertions in `tests/unit/helpers/`
+- [ ] T019 [P] Add unit test helper utilities for decimal assertions in `tests/unit/helpers/decimal-assertions.ts`
+- [ ] T061 [P] Add shared API error-schema contract assertions in `tests/contract/errors/error-schema.contract.test.ts`
 - [ ] T020 Constitution gate check: verify architecture/contracts/NFR traceability in `specs/001-multiple-estimates-project/plan.md`
 
 **Checkpoint**: Foundation complete; user stories can proceed.
@@ -69,6 +70,7 @@
 
 - [ ] T021 [P] [US1] Contract test for `POST /projects/{projectId}/estimates` in `tests/contract/estimates/create-estimate.contract.test.ts`
 - [ ] T022 [P] [US1] Contract test for duplicate-name conflict (`409`) in `tests/contract/estimates/create-estimate-duplicate.contract.test.ts`
+- [ ] T066 [P] [US1] Contract test for stale-revision conflict (`409`) in `tests/contract/estimates/stale-revision-conflict.contract.test.ts`
 - [ ] T023 [P] [US1] Integration test for estimate isolation in `tests/integration/estimates/estimate-isolation.test.ts`
 - [ ] T024 [P] [US1] Unit test for revision auto-increment behavior in `tests/unit/estimation/revisioning.test.ts`
 
@@ -78,7 +80,7 @@
 - [ ] T026 [US1] Implement unique-name-per-project domain rule in `src/modules/estimation/domain/services/EstimateNamingPolicy.ts`
 - [ ] T027 [US1] Implement estimate entity/value object mapping in `src/modules/estimation/domain/entities/Estimate.ts`
 - [ ] T028 [US1] Implement API handler for create estimate in `src/api/routes/estimates.ts`
-- [ ] T029 [US1] Persist audit fields and default `Draft` status in `src/modules/estimation/infrastructure/persistence/EstimateRepository.ts`
+- [ ] T029 [US1] Persist audit fields and default `Draft` status in `src/modules/estimation/infrastructure/persistence/PrismaEstimateRepository.ts`
 - [ ] T030 [US1] Implement estimate retrieval query scoped by estimate id in `src/modules/estimation/application/queries/GetEstimateById.ts`
 
 **Checkpoint**: US1 is deployable and independently testable.
@@ -127,6 +129,8 @@
 - [ ] T046 [P] [US3] Integration test for start-year change recalculation in `tests/integration/estimates/start-year-recalculation.test.ts`
 - [ ] T047 [P] [US3] Unit test for hierarchy roll-up order in `tests/unit/estimation/rollup-hierarchy.test.ts`
 - [ ] T048 [P] [US3] Unit test for EUR precision/determinism in `tests/unit/estimation/currency-precision.test.ts`
+- [ ] T064 [P] [US3] Integration test matrix for multi-role and multi-module roll-ups in `tests/integration/estimates/rollup-matrix.test.ts`
+- [ ] T065 [P] [US3] Unit test for zero-hour effort entry behavior in `tests/unit/estimation/zero-hour-effort.test.ts`
 
 ### Implementation for User Story 3
 
@@ -150,6 +154,8 @@
 - [ ] T057 [P] Add performance benchmark test for recalculation latency in `tests/integration/estimates/recalculation-performance.test.ts`
 - [ ] T058 [P] Add observability logs for roll-up traceability in `src/modules/estimation/application/commands/RecalculateEstimateTotals.ts`
 - [ ] T059 Add audit assertions for created/updated metadata in `tests/integration/estimates/audit-fields.test.ts`
+- [ ] T062 [P] Add pricing baseline and year+2 increment tests in `tests/unit/estimation/price-card-rules.test.ts` and `tests/integration/estimates/rate-year-increment.test.ts`
+- [ ] T063 [P] Add operability assertions for required recalculation log fields in `tests/integration/estimates/recalculation-observability.test.ts`
 - [ ] T060 Validate all NFR outcomes and document evidence in `specs/001-multiple-estimates-project/plan.md`
 
 ---
@@ -189,7 +195,7 @@
 
 ### US3 Parallel
 
-- T043-T048 can run in parallel.
+- T043-T048, T064, and T065 can run in parallel.
 - T051 and T052 can run in parallel before T053/T054.
 
 ## Implementation Strategy
@@ -212,4 +218,5 @@
 - Slice B: T021-T030 (US1)
 - Slice C: T031-T042 (US2)
 - Slice D: T043-T054 (US3)
-- Slice E: T055-T060 (polish)
+- Slice E: T055-T063 (polish and coverage hardening)
+- Slice F: T064-T065 (US3 matrix and zero-hour coverage)
