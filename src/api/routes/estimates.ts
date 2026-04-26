@@ -79,33 +79,39 @@ export const estimateRoutes: FastifyPluginAsync = async (fastify: FastifyInstanc
       const priceCard = new PriceCardProvider(fastify.db);
       const revisionGuard = new RevisionGuard();
       const command = new CreateTask(fastify.db, repo, roleGuard, priceCard, revisionGuard);
+      
+      // Convert roleBudget to effortEntries
+      const effortEntries = Object.entries(input.roleBudget).map(([roleTypeId, effortHours]) => ({
+        roleTypeId,
+        effortHours,
+      }));
+      
       const updatedEstimate = await command.execute({
         estimateId,
-        revision: input.revision,
-        solutionPhaseName: input.solutionPhase,
-        moduleName: input.module,
-        title: input.title,
-        description: input.description,
+        revision: input.revision || 1,
+        solutionPhaseName: input.phaseName,
+        moduleName: input.moduleName,
+        title: input.name,
+        description: '',
         repetitionCount: input.repetitionCount,
-        effortEntries: input.effortEntries,
+        effortEntries,
         updatedBy: input.updatedBy,
       });
 
       // Find the newly created task to return
       const createdTask = (updatedEstimate.solutionPhases as any[])
         .flatMap((p: any) => (p.modules as any[]).flatMap((m: any) => (m.tasks as any[]).map((t: any) => ({ task: t, phase: p.name, module: m.name }))))
-        .find((t: any) => t.task.title === input.title);
+        .find((t: any) => t.task.title === input.name);
 
       if (!createdTask) {
-        return reply.status(201).send({ id: 'unknown', title: input.title, isEnabled: true, repetitionCount: input.repetitionCount, totalEffortHours: 0, totalCostEur: 0 });
+        return reply.status(201).send({ id: 'unknown', name: input.name, isEnabled: input.isEnabled, repetitionCount: input.repetitionCount, totalEffortHours: 0, totalCostEur: 0 });
       }
 
       return reply.status(201).send({
         id: createdTask.task.id,
         solutionPhase: createdTask.phase,
         module: createdTask.module,
-        title: createdTask.task.title,
-        description: createdTask.task.description,
+        name: createdTask.task.title,
         isEnabled: createdTask.task.isEnabled,
         repetitionCount: createdTask.task.repetitionCount,
         totalEffortHours: parseFloat(createdTask.task.totalEffortHours.toString()),

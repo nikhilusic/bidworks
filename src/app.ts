@@ -1,10 +1,20 @@
 import Fastify from 'fastify';
+import { corsMiddleware } from './api/middleware/cors.js';
 import { dbPlugin } from './api/plugins/db.js';
 import { projectRoutes } from './api/routes/projects.js';
 import { estimateRoutes } from './api/routes/estimates.js';
 
 export const buildApp = async () => {
   const app = Fastify({ logger: true });
+  
+  // Enable CORS for frontend development
+  await corsMiddleware(app);
+  
+  // Health check endpoint
+  app.get('/', async () => {
+    return { status: 'ok', message: 'BidWorks Estimation API is running' };
+  });
+  
   await app.register(dbPlugin);
   await app.register(projectRoutes, { prefix: '/api/projects' });
   await app.register(estimateRoutes, { prefix: '/api/projects' });
